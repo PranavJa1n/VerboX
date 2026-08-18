@@ -16,3 +16,4 @@ def get_recent_deployments() -> str:
 @tool
 def fetch_k8s_pod_logs() -> str:
     return "logs - 1"
+
