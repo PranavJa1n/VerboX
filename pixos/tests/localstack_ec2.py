@@ -17,4 +17,6 @@ response = ec2.run_instances(
     MaxCount=1
 )
 
+instance_id = response["Instances"][0]["InstanceId"]
+print(f"Successfully started mock EC2 instance: {instance_id}")
 
