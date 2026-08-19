@@ -12,3 +12,5 @@ wheels/
 
 # LocalStack Data
 pixos/volume/
+
+pixos/src/pixos/data/instances.db

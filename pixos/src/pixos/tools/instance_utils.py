@@ -3,27 +3,20 @@ import pandas as pd
 import boto3
 import sys
 from datetime import timedelta, datetime, timezone
-
+from pixos.tools.db_utils import create_instance, delete_instance, instance_exists, stop_instance, get_instance
 
 BASE_DIR = Path(__file__).resolve().parent
 
 
 #check
 def check_instance(instance_id : str):
-    file = BASE_DIR.parent / 'localstack/instances/instances.csv'
-    df = pd.read_csv(file)
+    instance = get_instance(instance_id)
+    if(instance != None):
+        return instance['stop_time'] == None
+    else:
+        print(f"Instance {instance_id} does not exists.")
+        return False
     
-    for row in df.itertuples(index=True):
-        if(row.instance_id == instance_id):
-            if(not(pd.isna(row.stop_time))):
-                print("Instance Stopped at :", row.stop_time)
-                return -1
-            else:
-                print("Fetched the instance : ", row.instance_id,", running from :", row.start_time)
-                return row.instance_id
-        else:
-            print("Not exists")
-
 #create
 def run_instance():
     ec2 = boto3.client(
@@ -43,6 +36,11 @@ def run_instance():
 
     instance_id = response["Instances"][0]["InstanceId"]
     print(f"Successfully started mock EC2 instance: {instance_id}")
+
+    IST = timezone(timedelta(hours=5, minutes=30))
+    timestamp = datetime.now(IST)
+    create_instance(instance_id=instance_id, namespace="AWS/EC2", start_time=timestamp)
+
     return instance_id
 
 
@@ -91,7 +89,12 @@ def terminate_all_running_instances():
         
     print(f"Terminating instances: {instance_ids}")
     termination_response = ec2.terminate_instances(InstanceIds=instance_ids)
-    
+
+    for instance in instance_ids:
+        IST = timezone(timedelta(hours=5, minutes=30))
+        timestamp = datetime.now(IST)
+        stop_instance(instance_id=instance, stop_time=timestamp)
+
     return termination_response.get("TerminatingInstances", [])
 
 
@@ -104,6 +107,9 @@ def terminate_specific_instance(instance_id):
     print(f"Terminating specific instance: {instance_id}")
     try:
         termination_response = ec2.terminate_instances(InstanceIds=[instance_id])
+        IST = timezone(timedelta(hours=5, minutes=30))
+        timestamp = datetime.now(IST)
+        stop_instance(instance_id=instance_id, stop_time=timestamp)
         return termination_response.get("TerminatingInstances", [])
     except Exception as e:
         print(f" Error terminating instance {instance_id}: {str(e)}")
@@ -234,8 +240,18 @@ def get_all_running_instance(instance_id : str):
     print(f"Total running instances found: {total_running}")
     
     if total_running == 0:
-        print("No running instances to terminate.")
+        print("No running instances to Found")
         return []
     else:
         return instance_ids
 
+
+
+if __name__ =='__main__':
+    instance_id = run_instance()
+    print(check_instance(instance_id=instance_id))
+    seed_all_mock_data(instance_id=instance_id)
+    cpu = fetch_single_metric(instance_id=instance_id, namespace=get_instance(instance_id)['namespace'], metric_name="CPUUtilization")
+    print("CPU untilization :", cpu)
+    terminate_specific_instance(instance_id=instance_id)
+    get_all_running_instance(instance_id=instance_id)
