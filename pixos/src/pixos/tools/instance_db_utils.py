@@ -1,4 +1,4 @@
-from pixos.data.db_creation import get_connection
+from pixos.data.instance_db import get_connection
 from datetime import datetime, timezone, timedelta
 
 def timestamp_to_string(dt: datetime) -> str:
