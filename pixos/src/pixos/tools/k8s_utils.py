@@ -103,6 +103,8 @@ def list_all_clusters() -> list:
             detail="Can't reach the server right now",
             recovery_hint="Try again in some time",
         )
+def delete_subnet(subnet_id : str) -> str:
+    pass
 
 # Node group managment
 def create_node_group() -> str: # add more worker node
@@ -118,7 +120,7 @@ def list_node_group() -> str:
     pass
 
 if __name__ == '__main__':
-    subnet_ids = setup_local_networking()
+    subnet_ids = setup_local_networking() 
     res = create_cluster(subnet_ids=subnet_ids, cluster_name="testing", k8s_version="1.31", role_arn="arn:aws:iam::000000000000:role/fake-eks-role")
     create_cluster(subnet_ids=subnet_ids, cluster_name="testing2", k8s_version="1.31", role_arn="arn:aws:iam::000000000000:role/fake-eks-role")
     print(f"{res}\n\n")
