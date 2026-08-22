@@ -3,7 +3,7 @@ import pandas as pd
 import boto3
 import sys
 from datetime import timedelta, datetime, timezone
-from pixos.tools.db_utils import create_instance, delete_instance, instance_exists, stop_instance, get_instance
+from pixos.tools.instance_db_utils import create_instance, delete_instance, instance_exists, stop_instance, get_instance
 
 BASE_DIR = Path(__file__).resolve().parent
 
