@@ -3,7 +3,16 @@ from botocore.exceptions import ClientError
 import time
 from pixos.state.state import ErrorSchema
 
+import json
+
 FLOCI_URL : str = "http://localhost:4566"
+FLOCI_ENDPOINT = "http://localhost:4566"
+
+MOCK_CREDENTIALS = {
+    "aws_access_key_id": "mock_key",
+    "aws_secret_access_key": "mock_secret",
+    "region_name": "us-east-1"
+}
 
 ec2_client = boto3.client(
     "ec2",
@@ -107,27 +116,166 @@ def delete_subnet(subnet_id : str) -> str:
     pass
 
 # Node group managment
-def create_node_group() -> str: # add more worker node
-    pass
+def create_floci_node_role(role_name: str) -> str:
+    """
+    Creates an IAM role and attaches mandatory EKS worker node policies
+    on the local Floci emulator. Returns the Role ARN.
+    """
+    iam_client = boto3.client('iam', endpoint_url=FLOCI_ENDPOINT, **MOCK_CREDENTIALS)
+    
+    trust_policy = {
+        "Version": "2012-10-17",
+        "Mod": "Allow", # Trust document construct
+        "Statement": [{
+            "Effect": "Allow",
+            "Principal": {"Service": "://amazonaws.com"},
+            "Action": "sts:AssumeRole"
+        }]
+    }
 
-def delete_node_group() -> str:
-    pass
+    print(f"Checking IAM role '{role_name}' on Floci...")
+    try:
+        create_role_res = iam_client.create_role(
+            RoleName=role_name,
+            AssumeRolePolicyDocument=json.dumps(trust_policy),
+            Description="Local worker node role for Floci EKS"
+        )
+        node_role_arn = create_role_res['Role']['Arn']
+        print(f"Created new IAM Role: {node_role_arn}")
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'EntityAlreadyExists':
+            print("IAM role already exists. Fetching existing ARN...")
+            get_role_res = iam_client.get_role(RoleName=role_name)
+            node_role_arn = get_role_res['Role']['Arn']
+        else:
+            raise e
 
-def describe_node_group() -> str:
-    pass
+    # Mandatory baseline policies for EKS communication
+    required_policies = [
+        "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+        "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+    ]
 
-def list_node_group() -> str:
-    pass
+    print("Attaching AWS managed infrastructure policies...")
+    for policy_arn in required_policies:
+        try:
+            iam_client.attach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
+        except ClientError as e:
+            print(f"Could not attach policy {policy_arn}: {e}")
+
+    return node_role_arn
+
+
+def create_node_group(cluster_id: str, node_group_name: str, node_role_arn: str, subnet_ids: list) -> dict:
+    """
+    Provisions a managed node group against a specific cluster ID 
+    hosted inside the Floci AWS emulator environment.
+    """
+    eks_client = boto3.client('eks', endpoint_url=FLOCI_ENDPOINT, **MOCK_CREDENTIALS)
+
+    print(f"Provisioning node group '{node_group_name}' for cluster '{cluster_id}'...")
+    try:
+        response = eks_client.create_nodegroup(
+            clusterName=cluster_id,
+            nodegroupName=node_group_name,
+            scalingConfig={
+                'minSize': 1,
+                'maxSize': 3,
+                'desiredSize': 2
+            },
+            diskSize=20,
+            subnets=subnet_ids,
+            instanceTypes=['t3.medium'],
+            nodeRole=node_role_arn,
+            amiType='AL2_x86_64',
+            capacityType='ON_DEMAND'
+        )
+        print(f"Node group creation initiated! Current status: {response['nodegroup']['status']}")
+        return response['nodegroup']
+        
+    except ClientError as e:
+        print(f"Failed to execute create_nodegroup on Floci: {e}")
+        return None
+
+
+def list_node_groups(cluster_id: str) -> list:
+    """
+    Retrieves a list of all managed node group names associated with 
+    a specific cluster running on the Floci emulator.
+    """
+    eks_client = boto3.client('eks', endpoint_url=FLOCI_ENDPOINT, **MOCK_CREDENTIALS)
+    
+    print(f"Listing node groups for cluster '{cluster_id}'...")
+    try:
+        response = eks_client.list_nodegroups(clusterName=cluster_id)
+        node_groups = response.get('nodegroups', [])
+        print(f"Found node groups: {node_groups}")
+        return node_groups
+    except ClientError as e:
+        print(f"Failed to list node groups on Floci: {e}")
+        return []
+
+
+def describe_node_group(cluster_id: str, node_group_name: str) -> dict:
+    """
+    Gets detailed information (status, instance types, sizing, etc.) 
+    for a specific node group on Floci.
+    """
+    eks_client = boto3.client('eks', endpoint_url=FLOCI_ENDPOINT, **MOCK_CREDENTIALS)
+    
+    print(f"Describing node group '{node_group_name}' in cluster '{cluster_id}'...")
+    try:
+        response = eks_client.describe_nodegroup(
+            clusterName=cluster_id,
+            nodegroupName=node_group_name
+        )
+        nodegroup_details = response.get('nodegroup', {})
+        print(f"Node Group Status: {nodegroup_details.get('status')}")
+        return nodegroup_details
+    except ClientError as e:
+        print(f"Failed to describe node group on Floci: {e}")
+        return None
+
+
+def delete_node_group(cluster_id: str, node_group_name: str) -> bool:
+    """
+    Initiates the deletion process of a managed node group on Floci.
+    Returns True if successful, False otherwise.
+    """
+    eks_client = boto3.client('eks', endpoint_url=FLOCI_ENDPOINT, **MOCK_CREDENTIALS)
+    
+    print(f"Deleting node group '{node_group_name}' from cluster '{cluster_id}'...")
+    try:
+        eks_client.delete_nodegroup(
+            clusterName=cluster_id,
+            nodegroupName=node_group_name
+        )
+        print("Node group deletion successfully initiated!")
+        return True
+    except ClientError as e:
+        print(f"Failed to delete node group on Floci: {e}")
+        return False
+    
 
 if __name__ == '__main__':
-    subnet_ids = setup_local_networking() 
-    res = create_cluster(subnet_ids=subnet_ids, cluster_name="testing", k8s_version="1.31", role_arn="arn:aws:iam::000000000000:role/fake-eks-role")
-    create_cluster(subnet_ids=subnet_ids, cluster_name="testing2", k8s_version="1.31", role_arn="arn:aws:iam::000000000000:role/fake-eks-role")
-    print(f"{res}\n\n")
-    details = describe_cluster(cluster_name="testing")
-    print(f"{details}\n\n")
-    cluster_list = list_all_clusters()
-    print(f"{cluster_list}\n\n")
-    deleted = delete_cluster(cluster_name="testing")
-    delete_cluster(cluster_name="testing2")
-    print(f"{deleted}")
+    x = list_node_groups("testing")
+    print(x)
+    print(describe_node_group("testing", x[0]))
+    print(delete_node_group("testing", x[0]))
+    # subnet_ids = setup_local_networking() 
+    # res = create_cluster(subnet_ids=subnet_ids, cluster_name="testing", k8s_version="1.31", role_arn="arn:aws:iam::000000000000:role/fake-eks-role")
+    # create_cluster(subnet_ids=subnet_ids, cluster_name="testing2", k8s_version="1.31", role_arn="arn:aws:iam::000000000000:role/fake-eks-role")
+    # print(f"{res}\n\n")
+    # details = describe_cluster(cluster_name="testing")
+    # print(f"{details}\n\n")
+    # cluster_list = list_all_clusters()
+    # print(f"{cluster_list}\n\n")
+
+    # target_role_arn = create_floci_node_role(role_name="floci-worker-node-role")
+    # ng = create_node_group(cluster_id="testing", node_group_name="test_node_group", node_role_arn=target_role_arn, subnet_ids=subnet_ids)
+    # print(ng)
+
+    # deleted = delete_cluster(cluster_name="testing")
+    # delete_cluster(cluster_name="testing2")
+    # print(f"{deleted}")
