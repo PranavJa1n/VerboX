@@ -1,6 +1,6 @@
 from pathlib import Path
 import sqlite3
-
+from pixos.data.db_killer import db_killer
 
 def get_connection(db_name: str = "pixos_system.db"):
     db_path = Path(__file__).parent / db_name
@@ -19,6 +19,8 @@ def get_connection(db_name: str = "pixos_system.db"):
 
 
 def initialize_database():
+    db_path = Path(__file__).parent / "pixos_system.db"
+    db_killer(db_path)
     with get_connection() as conn:
 
         # asg
