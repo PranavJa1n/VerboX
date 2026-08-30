@@ -62,7 +62,7 @@ def main():
     print("Seeding Budget Table")
     for department, limit in budget_details.items():
         print(f"Writing : {department} - {limit}") 
-        bud.create(department_name=department, monthly_limit=limit, current_spend=0)
+        bud.create(department_name=department, monthly_limit=limit, current_spend=5)
     print("=" * 20)
     print("Budget Done!")
     print("=" * 20)
