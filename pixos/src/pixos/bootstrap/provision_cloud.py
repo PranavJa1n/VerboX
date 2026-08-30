@@ -28,6 +28,17 @@ def main():
             raise e
 
     try:
+        print("1. Creating VPC...")
+        vpc_response = ec2_client.create_vpc(CidrBlock="10.0.0.0/16")
+        vpc_id = vpc_response["Vpc"]["VpcId"]
+    
+        print(f"2. Creating Subnet in VPC {vpc_id}...")
+        subnet_response = ec2_client.create_subnet(
+            VpcId=vpc_id, 
+            CidrBlock="10.0.1.0/24", 
+            AvailabilityZone="us-east-1a"
+        )
+        subnet_id = subnet_response["Subnet"]["SubnetId"]
         response = asg_client.create_auto_scaling_group(
             AutoScalingGroupName=asg_name,
             MinSize=1,
@@ -37,7 +48,7 @@ def main():
                 'LaunchTemplateName': template_name,
                 'Version': '$Latest'
             },
-            VPCZoneIdentifier='dummy-subnet' 
+            VPCZoneIdentifier=subnet_id
         )
     except ec2_client.exceptions.ClientError as e:
         if e.response['Error']['Code'] == 'AlreadyExists':
