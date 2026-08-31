@@ -100,7 +100,6 @@ def fetch_metrics(instance_id):
 
 def get_metrics(instance_id: str) :
     res = fetch_metrics(instance_id=instance_id)
-    print(res)
     return res
 
 def get_pod_logs(deployment_name: str) :
@@ -115,6 +114,6 @@ def ping_application_health():
 
 
 if __name__ == '__main__':
-    get_metrics('i-45b647ee1029dd259')
+    print(get_metrics('i-e00ef2377a4a06be3s'))
     print(get_pod_logs("api-gateway"))
     print(ping_application_health())

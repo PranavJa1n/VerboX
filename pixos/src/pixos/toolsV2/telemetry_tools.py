@@ -2,7 +2,7 @@ from pixos.services.telemetry_service import get_metrics, get_pod_logs, ping_app
 from langchain.tools import tool
 
 @tool
-def get_metrics_tool(instance_id : str) -> dict:
+def get_metrics_tool(instance_id : str) -> dict[str, float]:
     """
     Fetch metrics for a given instance.
     
@@ -10,7 +10,10 @@ def get_metrics_tool(instance_id : str) -> dict:
         instance_id (string): ID of the instance to fetch metrics for.
 
     Returns:
-        dict: A dictionary containing the metrics for the instance.
+        dict: A dictionary containing the metrics for the instance, with the following keys:
+            - "cpu_util" (float): CPU utilization in percentage
+            - "memory_util" (float): Memory utilization in percentage
+            - "network_util" (float): Network Ingress Traffic in Bytes
     """
     return get_metrics(instance_id)
 
@@ -36,7 +39,7 @@ def ping_application_health_tool() -> dict[str, int | str | bool]:
         None
     
     Returns:
-        dict: A dictionary containing the health check result, with the following keys:
+        dict: A dictionary containing the health check result, with the following values:
             - "status" (int): The HTTP status code returned by the health check.
             - "message" (str): A human-readable message describing the status.
             - "success" (bool): True if status code indicates the application is healthy , False if the status code indicates an issue.
