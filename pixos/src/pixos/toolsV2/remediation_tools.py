@@ -1,8 +1,22 @@
 from pixos.services.remediation_service import scale_asg, rollback_k8s_deployment
 from langchain.tools import tool
 from pixos.storage.k8s_mock_store import k8s_store
+from pydantic import BaseModel, Field
 
-@tool
+class RollbackInput(BaseModel):
+    deployment_name: str = Field(
+        description="The exact name of the Kubernetes deployment to roll back"
+    )
+
+class ScaleAsgInputs(BaseModel):
+    asg_name: str = Field(
+        description="The exact name of the Auto Scaling Group to be scaleds"
+    )
+    new_capacity: int = Field(
+        description="The exact number of desired capacity of instances in the Auto Scaling Group"
+    )
+
+@tool(args_schema=ScaleAsgInputs)
 def scale_asg_tool(asg_name: str, new_capacity: int) -> dict[str, int | bool]:
     """
     Scale an AWS Auto Scaling Group (ASG) to a specified capacity.
@@ -21,7 +35,7 @@ def scale_asg_tool(asg_name: str, new_capacity: int) -> dict[str, int | bool]:
     """
     return scale_asg(asg_name, new_capacity)
 
-@tool
+@tool(args_schema=RollbackInput)
 def rollback_k8s_deployment_tool(deployment_name: str) -> dict[str, str | bool]:
     """
     Roll back a kubernetes deployment to its previous revision.
