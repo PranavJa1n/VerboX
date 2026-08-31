@@ -2,7 +2,7 @@ from pixos.storage.k8s_mock_store import k8s_store
 from pixos.storage.system_repo import ASG, Instance
 from pixos.core.floci_client import get_client
 
-def scale_asg(asg_name: str, new_capacity: int):
+def scale_asg(asg_name: str, new_capacity: int) -> dict[str, str | int | bool]:
     asg_client = get_client("autoscaling")
     ec2_client = get_client('ec2')
     print(f"Scaling ASG - {asg_name} to {new_capacity}")
@@ -15,12 +15,17 @@ def scale_asg(asg_name: str, new_capacity: int):
             )
     
     asg = ASG()
-
     old = asg.read(asg_name=asg_name)['desired_capacity']
     print(old)
     asg.update(asg_name=asg_name, new_capacity=new_capacity)
     # waking up other ec2s
-
+    res = {
+            "asg_name": asg_name,
+            "old_capacity": int(old),
+            "new_capacity": new_capacity,
+            "instance_spin": new_capacity-int(old),
+            "status": False,
+        }
     reservation = ec2_client.run_instances(
                 ImageId='ami-12345678', 
                 MinCount = new_capacity - int(old),
@@ -41,6 +46,8 @@ def scale_asg(asg_name: str, new_capacity: int):
     ins = Instance()
     for id in instance_ids:
         ins.create(instance_id=id, asg_name=asg_name)
+    res["status"] = True
+    return res
 
 def rollback_k8s_deployment(deployment_name: str):
     k8s_store.rollback(deployment_name=deployment_name)

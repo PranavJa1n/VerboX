@@ -1,8 +1,9 @@
 from pixos.services.remediation_service import scale_asg, rollback_k8s_deployment
 from langchain.tools import tool
+from pixos.storage.k8s_mock_store import k8s_store
 
 @tool
-def scale_asg_tool(asg_name: str, new_capacity: int) -> None:
+def scale_asg_tool(asg_name: str, new_capacity: int) -> dict[str, int | bool]:
     """
     Scale an AWS Auto Scaling Group (ASG) to a specified capacity.
     
@@ -11,12 +12,17 @@ def scale_asg_tool(asg_name: str, new_capacity: int) -> None:
         new_capacity (int): The new desired capacity to set for the ASG.
 
     Returns:
-        None
+        dict: A dictionary containing the status for scaling asg, with the following keys:
+            - "asg_name" (str): The name of the Auto Scaling Group that was scaled
+            - "old_capacity" (int): The old capacity of the Auto Scaling Group
+            - "new_capacity" (int): The new capacity of the Auto Scaling Group
+            - "instance_spin" (int): Number of new instances spun up
+            - "status" (bool): True if the Auto Scaling Group scaled successfully, False if it failed to scale
     """
     return scale_asg(asg_name, new_capacity)
 
 @tool
-def rollback_k8s_deployment_tool(deployment_name: str) -> None:
+def rollback_k8s_deployment_tool(deployment_name: str) -> dict[str, str | bool]:
     """
     Roll back a kubernetes deployment to its previous revision.
 
@@ -24,6 +30,13 @@ def rollback_k8s_deployment_tool(deployment_name: str) -> None:
         deployment_name (str): The name of kubernetes deployment to roll back.
 
     Returns:
-        None
+        dict: A dictionary containing the status for scaling asg, with the following keys:
+            - "deployment_name" (str): The name of kubernetes deployment to roll back.
+            - "safe_state" (bool): True if the Deployment is in safe state after rollback, False if Deployment is not in safe state after rollback
     """
-    return rollback_k8s_deployment(deployment_name)
+    rollback_k8s_deployment(deployment_name)
+    
+    return {
+        "deployment_name": deployment_name,
+        "safe_state": k8s_store.is_memory_leak_active,
+    }
