@@ -57,4 +57,3 @@ def seed_all_mock_data(instance_id, cpu_val=58.7, mem_val=74.2, net_in_val=10240
             }
         ]
     )
-    print(f" Successfully injected mock data -> CPU: {cpu_val}%, Memory: {mem_val}%, NetworkIn: {net_in_val} Bytes")

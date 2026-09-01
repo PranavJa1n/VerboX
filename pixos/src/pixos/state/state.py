@@ -1,6 +1,6 @@
-from typing import TypedDict, List, Annotated, Optional
+from typing import TypedDict, List, Annotated, Optional, Dict
 import operator
-from langchain_core.messages import BaseMessage
+from langchain_core.messages import BaseMessage, AnyMessage
 
 from pydantic import BaseModel, Field, ConfigDict
 
@@ -25,9 +25,9 @@ class ErrorSchema(BaseModel):
     )
 
 class IncidentState(TypedDict):
-    messages : Annotated[List[BaseMessage], operator.add]
+    messages : Annotated[List[AnyMessage], operator.add]
     incident_id : str
-    telemetry_context : str
-    finops_context : str
-    remediation_plan : str
+    telemetry_context : dict
+    finops_context : dict
+    remediation_plan : dict
 

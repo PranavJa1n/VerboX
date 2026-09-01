@@ -1,25 +1,10 @@
-from langchain.agents import create_agent
 from pixos.toolsV2.telemetry_tools import get_metrics_tool, get_pod_logs_tool, ping_application_health_tool
 from pixos.agents.system_prompts import TELEMETRY_SYSTEM_PROMPT
-import os
-from os import getenv
-from langchain_openai import AzureChatOpenAI
-from dotenv import load_dotenv
-
-load_dotenv()
+from pixos.agents.utils.agent import get_agent
 
 tools=[get_metrics_tool, get_pod_logs_tool, ping_application_health_tool]
 
-model = AzureChatOpenAI(
-    azure_deployment='gpt-4o',
-    api_version="2024-12-01-preview",
-    azure_endpoint=getenv('AZURE_OPENAI_ENDPOINT'),
-    api_key=getenv('AZURE_OPENAI_API_KEY'),
-    temperature = 0
-)
-
-telemetry_agent = create_agent(
-    model=model,
+telemetry_agent = get_agent(
     tools=tools,
     system_prompt=TELEMETRY_SYSTEM_PROMPT
 )
