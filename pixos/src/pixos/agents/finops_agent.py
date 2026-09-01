@@ -5,17 +5,10 @@ from langchain.agents import create_agent
 from pixos.agents.system_prompts import FINOPS_SYSTEM_PROMPT
 from dotenv import load_dotenv
 from os import getenv
-# from langchain_ollama import ChatOllama     # For local testing only
 
 load_dotenv()
 
 tools = [check_department_budget_tool, get_metrics_tool]
-
-# llm = AzureChatOpenAI(
-#     azure_deployment= getenv("AZURE_OPENAI_CHAT_DEPLOYMENT"),
-#     api_version= getenv("AZURE_OPENAI_API_VERSION"),
-#     temperature=0,
-# )
 
 model = AzureChatOpenAI(
     azure_deployment='gpt-4o',
@@ -26,7 +19,7 @@ model = AzureChatOpenAI(
 )
 
 finops_agent = create_agent(
-    model=model,          # change to model for local testing
+    model=model,
     tools=tools,
     system_prompt=FINOPS_SYSTEM_PROMPT,
 )

@@ -4,8 +4,8 @@ from pixos.agents.system_prompts import TELEMETRY_SYSTEM_PROMPT
 import os
 from os import getenv
 from langchain_openai import AzureChatOpenAI
-# from langchain_openrouter import ChatOpenRouter
 from dotenv import load_dotenv
+
 load_dotenv()
 
 tools=[get_metrics_tool, get_pod_logs_tool, ping_application_health_tool]
@@ -17,6 +17,7 @@ model = AzureChatOpenAI(
     api_key=getenv('AZURE_OPENAI_API_KEY'),
     temperature = 0
 )
+
 telemetry_agent = create_agent(
     model=model,
     tools=tools,
