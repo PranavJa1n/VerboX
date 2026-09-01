@@ -1,25 +1,12 @@
 from pixos.toolsV2.finops_tools import check_department_budget_tool
 from pixos.toolsV2.telemetry_tools import get_metrics_tool
-from langchain_openai import AzureChatOpenAI
-from langchain.agents import create_agent
 from pixos.agents.system_prompts import FINOPS_SYSTEM_PROMPT
-from dotenv import load_dotenv
-from os import getenv
-
-load_dotenv()
+from pixos.agents.utils.agent import get_agent
 
 tools = [check_department_budget_tool, get_metrics_tool]
 
-model = AzureChatOpenAI(
-    azure_deployment='gpt-4o',
-    api_version="2024-12-01-preview",
-    azure_endpoint=getenv('AZURE_OPENAI_ENDPOINT'),
-    api_key=getenv('AZURE_OPENAI_API_KEY'),
-    temperature = 0
-)
 
-finops_agent = create_agent(
-    model=model,
+finops_agent = get_agent(
     tools=tools,
     system_prompt=FINOPS_SYSTEM_PROMPT,
 )

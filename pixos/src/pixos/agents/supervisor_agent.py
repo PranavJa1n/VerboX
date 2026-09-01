@@ -18,7 +18,7 @@ if __name__ == "__main__":
     response = supervisor_agent.invoke({
         "messages": [{"role": "user", "content": user_query}]
     })
-    print(response)
+    # print(response)
     final_message = response["messages"][-1]
-    # print("\n--- AGENT RESPONSE ---")
-    # print(final_message.content)
+    print("\n--- AGENT RESPONSE ---")
+    print(final_message.content)

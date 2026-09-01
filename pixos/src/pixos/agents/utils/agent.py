@@ -13,10 +13,10 @@ model = AzureChatOpenAI(
     temperature = 0
 )
 
-def get_agent(tools : list, sys_prompt : str):
+def get_agent(tools : list, system_prompt : str):
     agent = create_agent(
     model=model,
     tools=tools,
-    system_prompt=sys_prompt
+    system_prompt=system_prompt
     )
     return agent
