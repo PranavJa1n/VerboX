@@ -22,14 +22,14 @@ model = ChatOllama(     # For local testing only
     temperature=0,
 )
 
-agent = create_agent(
+finops_agent = create_agent(
     model=model,          # change to model for local testing
     tools=tools,
     system_prompt=FINOPS_SYSTEM_PROMPT,
 )
 
 if __name__ == "__main__":
-    response = agent.invoke(
+    response = finops_agent.invoke(
         {
             "messages":[
                 {

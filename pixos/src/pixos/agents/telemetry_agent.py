@@ -12,7 +12,7 @@ model = ChatOpenRouter(
     api_key=os.environ.get("OPENAI_API_KEY"),
     max_tokens=1000
 )
-agent = create_agent(
+telemetry_agent = create_agent(
     model=model,
     tools=tools,
     system_prompt=TELEMETRY_SYSTEM_PROMPT
@@ -21,7 +21,7 @@ agent = create_agent(
 if __name__ == "__main__":
     user_query = " verify the application status using ping_application_health tool ,for deployemnt api-gateway."
 
-    response = agent.invoke({
+    response = telemetry_agent.invoke({
         "messages": [{"role": "user", "content": user_query}]
     })
 

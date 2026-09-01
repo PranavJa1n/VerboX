@@ -21,14 +21,14 @@ model = ChatOllama(     # For local testing only
     temperature=0,
 )
 
-agent = create_agent(
+remediation_agent = create_agent(
     model=llm,          # change to model for local testing
     tools=tools,
     system_prompt=REMEDIATION_SYSTEM_PROMPT
 )
 
 if __name__ == "__main__":
-    response = agent.invoke(
+    response = remediation_agent.invoke(
         {"messages": 
             [
                 {
