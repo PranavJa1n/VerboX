@@ -5,7 +5,7 @@ from langchain.agents import create_agent
 from pixos.agents.system_prompts import FINOPS_SYSTEM_PROMPT
 from dotenv import load_dotenv
 from os import getenv
-from langchain_ollama import ChatOllama     # For local testing only
+# from langchain_ollama import ChatOllama     # For local testing only
 
 load_dotenv()
 
@@ -17,9 +17,12 @@ tools = [check_department_budget_tool, get_metrics_tool]
 #     temperature=0,
 # )
 
-model = ChatOllama(     # For local testing only
-    model="gemma4:e4b",
-    temperature=0,
+model = AzureChatOpenAI(
+    azure_deployment='gpt-4o',
+    api_version="2024-12-01-preview",
+    azure_endpoint=getenv('AZURE_OPENAI_ENDPOINT'),
+    api_key=getenv('AZURE_OPENAI_API_KEY'),
+    temperature = 0
 )
 
 finops_agent = create_agent(

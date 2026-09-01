@@ -10,10 +10,12 @@ load_dotenv()
 
 tools = [scale_asg_tool, rollback_k8s_deployment_tool,]
 
-llm = AzureChatOpenAI(
-    azure_deployment= getenv("AZURE_OPENAI_CHAT_DEPLOYMENT"),
-    api_version= getenv("AZURE_OPENAI_API_VERSION"),
-    temperature=0,
+client = AzureChatOpenAI(
+    azure_deployment='gpt-4o',
+    api_version="2024-12-01-preview",
+    azure_endpoint=getenv('AZURE_OPENAI_ENDPOINT'),
+    api_key=getenv('AZURE_OPENAI_API_KEY'),
+    temperature = 0
 )
 
 model = ChatOllama(     # For local testing only
@@ -22,7 +24,7 @@ model = ChatOllama(     # For local testing only
 )
 
 remediation_agent = create_agent(
-    model=llm,          # change to model for local testing
+    model=client,          # change to model for local testing
     tools=tools,
     system_prompt=REMEDIATION_SYSTEM_PROMPT
 )
@@ -39,7 +41,7 @@ if __name__ == "__main__":
         },
     )
     print(response)
-    response = agent.invoke(
+    response = remediation_agent.invoke(
         {"messages": 
             [
                 {
