@@ -165,7 +165,9 @@ class Budget():
                         WHERE department_name = ?
                         """, (department_name,)
                     ).fetchone()
-            return dict(bud)
+                bud = dict(bud)
+                bud['department_name'] = department_name
+            return bud
 
 
 if __name__ == '__main__':
