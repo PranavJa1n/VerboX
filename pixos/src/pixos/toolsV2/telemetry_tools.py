@@ -1,13 +1,24 @@
 from pixos.services.telemetry_service import get_metrics, get_pod_logs, ping_application_health
 from langchain.tools import tool
+from pydantic import BaseModel, Field
 
-@tool
+class GetMetricsInput(BaseModel):
+    instance_id: str = Field(
+        description="The exact ID of the instance to fetch metrics for"
+    )
+
+class GetPodLogsInput(BaseModel):
+    deployment_name: str = Field(
+        description="The exact name of the kubernetes deployment whose pod logs should be retrieved."
+    )
+
+@tool(args_schema=GetMetricsInput)
 def get_metrics_tool(instance_id : str) -> dict[str, float]:
     """
     Fetch metrics for a given instance.
     
     Args:
-        instance_id (string): ID of the instance to fetch metrics for.
+        instance_id (str): ID of the instance to fetch metrics for.
 
     Returns:
         dict: A dictionary containing the metrics for the instance, with the following keys:
@@ -17,13 +28,13 @@ def get_metrics_tool(instance_id : str) -> dict[str, float]:
     """
     return get_metrics(instance_id)
 
-@tool
+@tool(args_schema=GetPodLogsInput)
 def get_pod_logs_tool(deployment_name: str) -> str:
     """
     Retrieve the logs for he pod(s) associated with a given Kubernetes deployment.
 
     Args:
-        deployment_name (string): The name of the kubernetes deployment whose pod logs should be retrieved.
+        deployment_name (str): The name of the kubernetes deployment whose pod logs should be retrieved.
 
     Returns:
         str: Retrieved pod logs as a simple string.
