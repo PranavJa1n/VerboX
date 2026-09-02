@@ -1,4 +1,4 @@
-from langchain.agents import create_agent
+from langgraph.prebuilt import create_react_agent
 from langchain_openai import AzureChatOpenAI
 from dotenv import load_dotenv
 import os
@@ -14,9 +14,10 @@ model = AzureChatOpenAI(
 )
 
 def get_agent(tools : list, system_prompt : str):
-    agent = create_agent(
+    agent = create_react_agent(
     model=model,
     tools=tools,
-    system_prompt=system_prompt
+    prompt=system_prompt
     )
     return agent
+

@@ -20,10 +20,10 @@ class KubernetesMockStore:
 
         self.deployments = {
             "api-gateway" : {
-                "current_revision" : 2,
+                "current_revision" : 1,
                 "history" : {
                     1 : {"image": "api:v2.3", "logs": "HTTP 200 OK"},
-                    2: {"image": "api:v2.4", "logs": "FATAL: OutOfMemoryError: Java heap space\n  at com.api.RedisCache.load(RedisCache.java:42)"} 
+                    # 2: {"image": "api:v2.4", "logs": "FATAL: OutOfMemoryError: Java heap space\n  at com.api.RedisCache.load(RedisCache.java:42)"} 
                 }
             }
         }
