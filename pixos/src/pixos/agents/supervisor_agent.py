@@ -15,7 +15,7 @@ supervisor_agent = get_agent(
 if __name__ == "__main__":
     user_query = r"""
 INCIDENT ALERT
-instance_id: i-448f97ac1fcb74a5c
+instance_id: i-6671df811751ab3ef
 deployment_name: api-gateway
 department_name: dept2
 auto scaling group name: prod-asg-2
