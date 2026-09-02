@@ -13,7 +13,13 @@ supervisor_agent = get_agent(
 )
 
 if __name__ == "__main__":
-    user_query = " verify the application status using ping_application_health tool for deployemnt api-gateway. Instance ID - 'i-880e394881001fdae', what should be out next step taking finance into consideration for department 'dept1'"
+    user_query = r"""
+INCIDENT ALERT
+instance_id: i-448f97ac1fcb74a5c
+deployment_name: api-gateway
+department_name: dept2
+auto scaling group name: prod-asg-2
+description: The api-gateway is returning HTTP 500 errors on ~40% of requests over the last 5 minutes. Response latency has also increased from ~120ms to ~2.1s."""
 
     response = supervisor_agent.invoke({
         "messages": [{"role": "user", "content": user_query}]

@@ -165,6 +165,8 @@ class Budget():
                         WHERE department_name = ?
                         """, (department_name,)
                     ).fetchone()
+                if bud is None:
+                    raise ValueError(f"No budget record found for department_name={department_name}")
                 bud = dict(bud)
                 bud['department_name'] = department_name
             return bud
