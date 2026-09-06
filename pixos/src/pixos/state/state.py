@@ -1,4 +1,4 @@
-from typing import TypedDict, List, Annotated, Optional, Dict
+from typing import TypedDict, List, Annotated, Optional, Dict, Sequence
 import operator
 from langchain_core.messages import BaseMessage, AnyMessage
 
@@ -25,9 +25,10 @@ class ErrorSchema(BaseModel):
     )
 
 class IncidentState(TypedDict):
-    messages : Annotated[List[AnyMessage], operator.add]
+    messages : Annotated[Sequence[AnyMessage], operator.add]
     incident_id : str
     telemetry_context : dict
     finops_context : dict
     remediation_plan : dict
+    next : str
 

@@ -52,5 +52,5 @@ def rollback_k8s_deployment_tool(deployment_name: str) -> dict[str, str | bool]:
     
     return {
         "deployment_name": deployment_name,
-        "safe_state": k8s_store.is_memory_leak_active,
+        "safe_state": not(k8s_store.is_memory_leak_active),
     }
