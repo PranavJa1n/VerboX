@@ -3,7 +3,6 @@ from typing import Literal, Optional
 
 Action = Literal["allow", "block"]
 Operator = Literal[">", "<", ">=", "<=", "==", "!=", "always"]
-FailMode = Literal["fail_open", "fail_safe"]
 
 @dataclass
 class PolicyRule:
@@ -11,14 +10,13 @@ class PolicyRule:
     tool: str
     operator: Operator
     action: Action
-    fail_mode: FailMode
     message: str
     field: Optional[str] = None
     value: Optional[object] = None
 
     @staticmethod
     def form_dict(data: dict) -> "PolicyRule":
-        required_fields = ["policy", "tool", "operator", "action", "fail_mode", "message"]
+        required_fields = ["policy", "tool", "operator", "action", "message"]
         missing = [i for i in required_fields if i not in data]
 
         if missing:
@@ -52,4 +50,3 @@ class PolicyDecision:
     decision: Literal["allow", "block"]
     matched_policy: str | None
     message: str | None
-    fail_mode_triggered: bool = False

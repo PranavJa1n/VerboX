@@ -8,5 +8,3 @@ wheels/
 
 # Virtual environments
 .venv
-fail_safe_scaling.yaml
-fail_open_scaling.yaml

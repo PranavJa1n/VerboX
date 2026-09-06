@@ -1,8 +1,7 @@
 import glob
 import os
 import yaml
-from schema import PolicyRule
-
+from verbox_dashboard.policy.schema import PolicyRule
 
 def load_rules(rules_dir_path: str) -> dict[str, list[PolicyRule]]:
     if not os.path.isdir(rules_dir_path):
@@ -24,7 +23,7 @@ def load_rules(rules_dir_path: str) -> dict[str, list[PolicyRule]]:
             continue
 
         try:
-            rule = PolicyRule.from_dict(raw)
+            rule = PolicyRule.form_dict(raw)
         except ValueError as exc:
             raise ValueError(f"Invalid policy rule in file '{file}': {exc}") from exc
 

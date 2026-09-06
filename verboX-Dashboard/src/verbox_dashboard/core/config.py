@@ -7,3 +7,8 @@ class VerboxBackendConfig:
     rule_dir_path = os.getenv("VERBOX_RULES_DIR", r"./rules")
     verbox_host = os.getenv("VERBOX_HOST", "0.0.0.0")
     verbox_port = int(os.getenv("VERBOX_PORT","6969"))
+
+config = VerboxBackendConfig()
+
+if __name__=="__main__":
+    print(config.rule_dir_path)

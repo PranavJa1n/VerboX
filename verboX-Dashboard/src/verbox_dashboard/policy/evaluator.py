@@ -1,4 +1,4 @@
-from schema import PolicyDecision, PolicyRule
+from verbox_dashboard.policy.schema import PolicyDecision, PolicyRule
 
 _OPERATORS = {
     "==": lambda a, b: a == b,
@@ -28,16 +28,11 @@ def evaluate(tool_name: str, arguments: dict, rules_by_tool: dict[str, list[Poli
         try:
             matched = _rule_matches(rule, arguments)
         except KeyError as exc:
-            if rule.fail_mode == "fail_safe":
-                return PolicyDecision(
-                    decision="block",
-                    matched_policy=rule.policy,
-                    message=f"Blocked by fail_safe after evaluation error: {exc}",
-                    fail_mode_triggered=True,
-                )
-            else:
-                print(f"[verbox_backend] fail_open: ignoring evaluation error on '{rule.policy}': {exc}")
-                continue
+            return PolicyDecision(
+                decision="block",
+                matched_policy=rule.policy,
+                message=f"Blocked by fail_safe after evaluation error: {exc}",
+            )
 
         if matched and rule.action == "block":
             return PolicyDecision(
