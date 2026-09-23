@@ -22,11 +22,14 @@ def load_rules(rules_dir_path: str) -> dict[str, list[PolicyRule]]:
         if raw is None:
             continue
 
-        try:
-            rule = PolicyRule.form_dict(raw)
-        except ValueError as exc:
-            raise ValueError(f"Invalid policy rule in file '{file}': {exc}") from exc
+        if "rules" not in raw or not isinstance(raw["rules"], list):
+            raise ValueError(f"'{file}' must have a top-level 'rules:' list. Got: {raw}")
 
-        rules_by_tool.setdefault(rule.tool, []).append(rule)
+        for rule_dict in raw["rules"]:
+            try:
+                rule = PolicyRule.form_dict(rule_dict)
+            except ValueError as exc:
+                raise ValueError(f"Invalid policy rule in file '{file}': {exc}") from exc
+            rules_by_tool.setdefault(rule.tool, []).append(rule)
 
     return rules_by_tool
