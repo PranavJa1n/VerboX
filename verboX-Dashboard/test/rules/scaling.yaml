@@ -1,7 +1,16 @@
-policy: max_automated_asg_scaling
-tool: scale_asg_tool
-field: new_capacity
-operator: ">"
-value: 10
-action: block
-message: "Automated Scaling exceeds 10 instances"
+rules:
+  - policy: max_automated_asg_scaling
+    tool: scale_asg_tool
+    field: new_capacity
+    operator: ">"
+    value: 10
+    action: block
+    message: "Automated Scaling exceeds 10 instances"
+
+  - policy: block_unsafe_rollback
+    tool: rollback_k8s_deployment_tool
+    field: deployment_name
+    operator: "=="
+    value: "testing-protective"
+    action: block
+    message: "Rollback of protected-service requires manual approval"

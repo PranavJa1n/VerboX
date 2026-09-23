@@ -24,6 +24,20 @@ def main() -> None:
         description="will allow this action",
     )
 
+    case(
+        "rollback_k8s_deployment_tool",
+        {"deployment_name": "testing-not-protective"},
+        rule_by_tool=rule_by_tool,
+        description="will allow this action",
+    )
+
+    case(
+        "rollback_k8s_deployment_tool",
+        {"deployment_name": "testing-protective"},
+        rule_by_tool=rule_by_tool,
+        description="will block this action as it is protected",
+    )
+
     print("\nDone\n")
 
 if __name__=="__main__":
