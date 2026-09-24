@@ -3,13 +3,13 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 @dataclass
-class Flag(BaseModel):
+class Flag:
     type: str
     severity: float
     reason: str
 
 @dataclass
-class Verdict(BaseModel):
+class Verdict:
     verdict_id: str
     trace_id: str
     span_id: str
