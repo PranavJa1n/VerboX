@@ -1,4 +1,4 @@
-from verbox_dashboard.policy.schema import PolicyDecision, PolicyRule
+from backend.policy.schema import PolicyDecision, PolicyRule
 
 _OPERATORS = {
     "==": lambda a, b: a == b,

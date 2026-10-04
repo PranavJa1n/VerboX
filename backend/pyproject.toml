@@ -1,5 +1,5 @@
 [project]
-name = "verbox-dashboard"
+name = "backend"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-verbox-dashboard = "verbox_dashboard:main"
+backend = "backend:main"
 
 [build-system]
 requires = ["uv_build>=0.12.3,<0.13.0"]

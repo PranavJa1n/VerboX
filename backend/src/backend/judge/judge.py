@@ -1,9 +1,9 @@
 import uuid
 import os
 from datetime import datetime
-from verbox_dashboard.judge.llm_client import judge
-from verbox_dashboard.judge.prompt import build_judge_prompt, PROMPT_VERSION
-from verbox_dashboard.judge.schema import Flag, Verdict
+from backend.judge.llm_client import judge
+from backend.judge.prompt import build_judge_prompt, PROMPT_VERSION
+from backend.judge.schema import Flag, Verdict
 from dotenv import load_dotenv
 
 load_dotenv()

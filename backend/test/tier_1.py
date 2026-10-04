@@ -1,6 +1,6 @@
-from verbox_dashboard.policy.un_yamling import load_rules
-from verbox_dashboard.policy.evaluator import evaluate
-from verbox_dashboard.core.config import config
+from backend.policy.un_yamling import load_rules
+from backend.policy.evaluator import evaluate
+from backend.core.config import config
 
 def case(tool_name: str, arg: dict, rule_by_tool: dict, description: str) -> None:
     decision = evaluate(tool_name, arg, rule_by_tool)

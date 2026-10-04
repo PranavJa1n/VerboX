@@ -3,7 +3,7 @@ from langchain_openai import AzureChatOpenAI
 from dotenv import load_dotenv
 import os
 from pydantic import BaseModel, Field
-from verbox_dashboard.judge.schema import VerdictOutput
+from backend.judge.schema import VerdictOutput
 
 load_dotenv()
 

@@ -1,7 +1,7 @@
 import glob
 import os
 import yaml
-from verbox_dashboard.policy.schema import PolicyRule
+from backend.policy.schema import PolicyRule
 
 def load_rules(rules_dir_path: str) -> dict[str, list[PolicyRule]]:
     if not os.path.isdir(rules_dir_path):

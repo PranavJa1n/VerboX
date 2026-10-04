@@ -1,5 +1,5 @@
 [project]
-name = "verbox-sdk"
+name = "sdk"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
