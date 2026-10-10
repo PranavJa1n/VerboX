@@ -8,19 +8,25 @@ load_dotenv()
 
 
 class ConnectRedis:
+    _pool = None
 
-    @staticmethod
-    def connect(self):
-        r = redis.ConnectionPool(
-            host=os.getenv('REDIS_HOST'),
-            port=os.getenv('REDIS_PORT'),
-            decode_responses=True,
-            username="default",
-            password=os.getenv('REDIS_PASSWORD'),
-        )
-        return r
+    @classmethod
+    def get_pool(cls):
+        if cls._pool is None:
+            cls._pool = redis.ConnectionPool(
+                host=os.getenv('REDIS_HOST', 'localhost'),
+                port=int(os.getenv('REDIS_PORT', 6379)),
+                decode_responses=True,
+                username=os.getenv('REDIS_USERNAME', 'default'),
+                password=os.getenv('REDIS_PASSWORD'),
+            )
+        return cls._pool
+
+    @classmethod
+    def get_client(cls):
+        return redis.Redis(connection_pool=cls.get_pool())
 
 
 if __name__=='__main__':
-    print(ConnectRedis.connect())
-
+    client = ConnectRedis.get_client()
+    print("Redis Ping:", client.ping())

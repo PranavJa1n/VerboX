@@ -1,22 +1,62 @@
+import json
+import hashlib
+import time
 from backend.dedup.redis_client import RedisClient
 
 class Cache:
-
     def __init__(self):
         self.client = RedisClient()
 
-    def get_cache(tool_name, norm_args):
-        pass
+    def normalized(self, arguments):
+        """Recursively sort the dictionary keys alphabetically."""
+        if isinstance(arguments, dict):
+            return {k: self.normalized(v) for k, v in sorted(arguments.items())}
+        elif isinstance(arguments, list):
+            return [self.normalized(v) for v in arguments]
+        return arguments
 
-    def normalized(arguments):
-        pass
+    def get_cache(self, tool_name, norm_args):
+        """Generate cache key using hash(tool_name + normalized(arguments))"""
+        arg_str = json.dumps(norm_args)
+        data_to_hash = f"{tool_name}:{arg_str}".encode('utf-8')
+        return hashlib.sha256(data_to_hash).hexdigest()
 
-    def orchestrator(self, tool_call):
-        key = self.get_cache(tool_call.tool_name, self.normalized(tool_call.arguments))
+    def orchestrator(self, tool_call, agent_id="agent"):
+        # 1. Normalize and hash the input
+        norm_args = self.normalized(tool_call.arguments)
+        key = self.get_cache(tool_call.tool_name, norm_args)
 
-        result = self.client.get(key)
+        # 2. Try to atomically claim it
+        claim_value = f"CLAIMED_BY_{agent_id}"
+        claimed = self.client.setnx(key, claim_value, timeout=30)
 
-        if not result:
+        # 3. If claimed successfully -> return False ("Go ahead and execute, you own this")
+        if claimed:
             return False
 
-        return result
+        # 4. If claim fails -> someone else is already working on it. Wait for the result.
+        for _ in range(30): # Poll for up to 30 seconds
+            result = self.client.get(key)
+            if result and not str(result).startswith("CLAIMED_BY_"):
+                
+                # 5. WE SAVED A DUPLICATE! Log it to the dashboard counter.
+                self.client.increment_duplicate_counter()
+                
+                # Data is ready
+                try:
+                    return json.loads(result)
+                except (json.JSONDecodeError, TypeError):
+                    return result
+            time.sleep(1) # Wait before next check
+            
+        # Fallback if wait times out
+        return False
+
+    # 6. THE MISSING PIECE: The write-back method
+    def save_result(self, tool_call, result_data):
+        """Called by the agent after it finishes executing the tool to resolve the claim."""
+        norm_args = self.normalized(tool_call.arguments)
+        key = self.get_cache(tool_call.tool_name, norm_args)
+        
+        # Overwrite the 'CLAIMED_BY_...' string with the actual JSON payload
+        self.client.set(key, json.dumps(result_data))
