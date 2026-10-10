@@ -2,6 +2,7 @@ import json
 import hashlib
 import time
 from backend.dedup.redis_client import RedisClient
+from src.backend.schemas.evaluate import EvaluationRequest
 
 class Cache:
     def __init__(self):
@@ -15,19 +16,20 @@ class Cache:
             return [self.normalized(v) for v in arguments]
         return arguments
 
-    def get_cache(self, tool_name, norm_args):
+    def get_cache(self, tool_name: str, norm_args: dict) -> str:
         """Generate cache key using hash(tool_name + normalized(arguments))"""
         arg_str = json.dumps(norm_args)
         data_to_hash = f"{tool_name}:{arg_str}".encode('utf-8')
         return hashlib.sha256(data_to_hash).hexdigest()
 
-    def orchestrator(self, tool_call, agent_id="agent"):
-        # 1. Normalize and hash the input
-        norm_args = self.normalized(tool_call.arguments)
-        key = self.get_cache(tool_call.tool_name, norm_args)
+    def orchestrator(self, request: EvaluationRequest):
+        """Intercepts the tool request, atomically claims execution rights, or returns cached data."""
+        # 1. Normalize and hash the input from the Pydantic model
+        norm_args = self.normalized(request.arguments)
+        key = self.get_cache(request.tool_name, norm_args)
 
-        # 2. Try to atomically claim it
-        claim_value = f"CLAIMED_BY_{agent_id}"
+        # 2. Try to atomically claim it using the agent_id from the request
+        claim_value = f"CLAIMED_BY_{request.agent_id}"
         claimed = self.client.setnx(key, claim_value, timeout=30)
 
         # 3. If claimed successfully -> return False ("Go ahead and execute, you own this")
@@ -52,11 +54,10 @@ class Cache:
         # Fallback if wait times out
         return False
 
-    # 6. THE MISSING PIECE: The write-back method
-    def save_result(self, tool_call, result_data):
+    def save_result(self, request: EvaluationRequest, result_data: dict):
         """Called by the agent after it finishes executing the tool to resolve the claim."""
-        norm_args = self.normalized(tool_call.arguments)
-        key = self.get_cache(tool_call.tool_name, norm_args)
+        norm_args = self.normalized(request.arguments)
+        key = self.get_cache(request.tool_name, norm_args)
         
         # Overwrite the 'CLAIMED_BY_...' string with the actual JSON payload
         self.client.set(key, json.dumps(result_data))
