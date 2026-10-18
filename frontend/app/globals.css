@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --c-cream: 249 249 248;
+  --c-surface: 255 255 255;
+  --c-warm: 243 240 234;
+  --c-border: 226 226 223;
+  --c-border-dark: 212 212 206;
+  --c-charcoal: 26 26 25;
+  --c-muted: 102 102 97;
+  --c-subtle: 140 140 132;
+  --c-terra: 189 83 56;
+  --c-terra-hover: 163 68 44;
+  --c-terra-light: 248 236 232;
+  --c-sage: 45 106 79;
+  --c-sage-light: 235 244 239;
+  --c-amber: 180 83 9;
+  --c-amber-light: 254 243 199;
+  color-scheme: light;
+}
+
+:root.dark {
+  --c-cream: 20 20 19;
+  --c-surface: 28 28 26;
+  --c-warm: 36 36 34;
+  --c-border: 52 52 47;
+  --c-border-dark: 69 69 63;
+  --c-charcoal: 242 241 236;
+  --c-muted: 163 163 155;
+  --c-subtle: 124 124 117;
+  --c-terra: 214 96 66;
+  --c-terra-hover: 226 112 84;
+  --c-terra-light: 58 38 32;
+  --c-sage: 82 183 136;
+  --c-sage-light: 27 45 37;
+  --c-amber: 242 176 76;
+  --c-amber-light: 51 40 15;
+  color-scheme: dark;
+}
+
+body {
+  background-color: rgb(var(--c-cream));
+  color: rgb(var(--c-charcoal));
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+header,
+nav,
+footer,
+.bg-cream-surface,
+.bg-cream-warm {
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgb(var(--c-cream)); }
+::-webkit-scrollbar-thumb { background: rgb(var(--c-border-dark)); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-terra)); }
+
+/* Theme toggle icons */
+.icon-sun { display: none; }
+.dark .icon-sun { display: block; }
+.dark .icon-moon { display: none; }
+
+/* Flash highlight for live updates */
+@keyframes flash {
+  from { background-color: rgb(var(--c-terra-light)); }
+  to { background-color: transparent; }
+}
+.flash { animation: flash 1.6s ease-out; }
+
+/* Demo pipeline stages */
+.stage {
+  border: 1px solid rgb(var(--c-border));
+  background: rgb(var(--c-warm));
+  color: rgb(var(--c-muted));
+  transition: all 0.25s ease;
+}
+.stage.active {
+  border-color: rgb(var(--c-terra));
+  background: rgb(var(--c-terra-light));
+  color: rgb(var(--c-terra));
+  font-weight: 600;
+  transform: translateY(-1px);
+}
+.stage.done {
+  border-color: rgb(var(--c-sage) / 0.5);
+  background: rgb(var(--c-sage-light));
+  color: rgb(var(--c-sage));
+}
+
+/* Demo terminal (always dark) */
+.term { background: #121211; color: #e8e6df; border: 1px solid rgb(var(--c-border)); }
+.term .ts { color: #6f6f68; }
+.term .tag { display: inline-block; min-width: 76px; font-weight: 500; }
+.term .k-info .tag { color: #8ab4f8; }
+.term .k-ok .tag { color: #6fcf97; }
+.term .k-warn .tag { color: #f2b04c; }
+.term .k-block .tag { color: #f0836a; }
+.term .k-block .msg { color: #f7b7a6; }
+.term .k-sys .tag { color: #a78bfa; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.term .line { animation: rise 0.25s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flash,
+  .term .line { animation: none; }
+  .stage { transition: none; }
+}
