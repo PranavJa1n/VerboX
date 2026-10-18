@@ -15,7 +15,7 @@ def evaluate(step: dict) -> Verdict:
     flags = [Flag(type=f.type, severity=f.severity, reason=f.reason) for f in raw_output.flags]
 
     return Verdict(
-        verdict_id = str(uuid.uuid4),
+        verdict_id = str(uuid.uuid4()),
         trace_id = step.get("trace_id"),
         span_id = step.get("span_id"),
         flags = flags,
