@@ -2,7 +2,7 @@ import json
 import hashlib
 import time
 from backend.dedup.redis_client import RedisClient
-from src.backend.schemas.evaluate import EvaluationRequest
+from backend.schemas.evaluate import EvaluationRequest
 
 class Cache:
     def __init__(self):
