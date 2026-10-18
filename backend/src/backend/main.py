@@ -1,7 +1,7 @@
 # Fast API entrypoints
 
 from fastapi import FastAPI
-from src.backend.api.router import api_router
+from backend.api.router import api_router
 
 app = FastAPI(title="verboX Control Plane", version="1.0.0")
 
