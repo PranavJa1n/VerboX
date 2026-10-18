@@ -12,6 +12,7 @@ dependencies = [
     "dotenv-python>=0.0.1",
     "langchain>=1.4.2",
     "langchain-openai>=1.6.4",
+    "openai>=3.19.0",
     "pymongo>=4.19.0",
     "python-dotenv>=1.2.3",
     "pyyaml>=6.0.3",
