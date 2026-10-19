@@ -104,7 +104,7 @@ DevOps and SRE teams will look at this dashboard to see exactly where their agen
 
 You now have a mathematically sound, distributed core. Hand these objectives to your co-developers to transform this backend into a shippable product.
 
-* **Next Step 1: The Policy Engine (Tier 1)**
+* **Next Step 1: The Policy Engine (Tier 1) [COMPLETED]**
   Right now, the Tier 1 Iron Gate perfectly intercepts duplicates, but the YAML evaluation is still mocked. A developer needs to build the parser that reads `policies/system_defaults.yaml`^^ and executes deterministic checks (e.g., verifying `arguments.amount < 50`) in milliseconds before allowing the cache check to proceed.
 * **Next Step 2: The Control Plane Dashboard**
   The React/Next.js frontend must be built^^. A developer needs to write the `GET /metrics` and `GET /traces/{trace_id}` FastAPI endpoints. These routes will query Cosmos DB's `verdicts` collection and visualize the compliance scores and financial/compute waste caused by redundant agent loops^^.
