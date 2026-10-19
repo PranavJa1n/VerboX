@@ -2,71 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------------------------------------------
+   Theme tokens (light + dark). Every Tailwind colour in
+   tailwind.config.ts points at one of these variables.
+------------------------------------------------------------------- */
 :root {
-  --c-cream: 249 249 248;
-  --c-surface: 255 255 255;
-  --c-warm: 243 240 234;
-  --c-border: 226 226 223;
-  --c-border-dark: 212 212 206;
-  --c-charcoal: 26 26 25;
-  --c-muted: 102 102 97;
-  --c-subtle: 140 140 132;
-  --c-terra: 189 83 56;
-  --c-terra-hover: 163 68 44;
-  --c-terra-light: 248 236 232;
-  --c-sage: 45 106 79;
-  --c-sage-light: 235 244 239;
-  --c-amber: 180 83 9;
-  --c-amber-light: 254 243 199;
+  --c-cream: 236 236 236;        /* page background */
+  --c-surface: 255 255 255;      /* cards */
+  --c-warm: 244 244 244;         /* chips, inputs, inner panels */
+  --c-border: 232 232 232;
+  --c-border-dark: 205 205 205;
+  --c-charcoal: 17 17 17;        /* text + black pills */
+  --c-muted: 110 110 110;
+  --c-subtle: 150 150 150;
+  --c-terra: 242 87 41;          /* orange accent */
+  --c-terra-hover: 222 70 26;
+  --c-terra-light: 254 236 229;
+  --c-sage: 22 148 84;
+  --c-sage-light: 227 246 236;
+  --c-amber: 217 119 6;
+  --c-amber-light: 254 243 215;
   color-scheme: light;
 }
 
 :root.dark {
-  --c-cream: 20 20 19;
-  --c-surface: 28 28 26;
-  --c-warm: 36 36 34;
-  --c-border: 52 52 47;
-  --c-border-dark: 69 69 63;
-  --c-charcoal: 242 241 236;
-  --c-muted: 163 163 155;
-  --c-subtle: 124 124 117;
-  --c-terra: 214 96 66;
-  --c-terra-hover: 226 112 84;
-  --c-terra-light: 58 38 32;
-  --c-sage: 82 183 136;
-  --c-sage-light: 27 45 37;
-  --c-amber: 242 176 76;
-  --c-amber-light: 51 40 15;
+  --c-cream: 12 12 12;
+  --c-surface: 24 24 24;
+  --c-warm: 34 34 34;
+  --c-border: 42 42 42;
+  --c-border-dark: 64 64 64;
+  --c-charcoal: 245 245 245;
+  --c-muted: 163 163 163;
+  --c-subtle: 120 120 120;
+  --c-terra: 255 106 61;
+  --c-terra-hover: 255 128 88;
+  --c-terra-light: 56 30 22;
+  --c-sage: 74 201 134;
+  --c-sage-light: 20 44 32;
+  --c-amber: 245 175 66;
+  --c-amber-light: 52 40 14;
   color-scheme: dark;
 }
 
 body {
   background-color: rgb(var(--c-cream));
   color: rgb(var(--c-charcoal));
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-header,
-nav,
-footer,
 .bg-cream-surface,
 .bg-cream-warm {
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
-/* Custom subtle scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: rgb(var(--c-cream)); }
-::-webkit-scrollbar-thumb { background: rgb(var(--c-border-dark)); border-radius: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(var(--c-border-dark)); border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-terra)); }
 
-/* Theme toggle icons */
+/* ------------------------------------------------------------------
+   Shape language. The tabs that were not rewritten still use
+   `rounded-[4px]`; these rules turn that into the new rounded look
+   (cards = 20px, buttons / inputs / badges = pills) without editing
+   every component.
+------------------------------------------------------------------- */
+[class*="rounded-[4px]"] { border-radius: 1.25rem; }
+button[class*="rounded-[4px]"],
+input[class*="rounded-[4px]"],
+select[class*="rounded-[4px]"],
+span[class*="rounded-[4px]"] { border-radius: 9999px; }
+button.text-left[class*="rounded-[4px]"],
+p[class*="rounded-[4px]"] { border-radius: 1rem; }
+
+.font-serif.italic { font-style: normal; }
+
+/* Theme toggle: show moon in light mode, sun in dark mode */
 .icon-sun { display: none; }
 .dark .icon-sun { display: block; }
 .dark .icon-moon { display: none; }
 
-/* Flash highlight for live updates */
+/* Orange gradient hero card */
+.accent-card {
+  background-image: linear-gradient(145deg, rgb(var(--c-terra)) 0%, rgb(255 140 82) 100%);
+}
+
+/* Live-update highlight */
 @keyframes flash {
   from { background-color: rgb(var(--c-terra-light)); }
   to { background-color: transparent; }
@@ -93,8 +114,13 @@ footer,
   color: rgb(var(--c-sage));
 }
 
-/* Demo terminal (always dark) */
-.term { background: #121211; color: #e8e6df; border: 1px solid rgb(var(--c-border)); }
+/* Demo terminal (always dark, real monospace) */
+.term {
+  background: #121211;
+  color: #e8e6df;
+  border: 1px solid rgb(var(--c-border));
+  font-family: var(--font-code), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
 .term .ts { color: #6f6f68; }
 .term .tag { display: inline-block; min-width: 76px; font-weight: 500; }
 .term .k-info .tag { color: #8ab4f8; }
