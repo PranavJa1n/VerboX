@@ -1,6 +1,7 @@
 import json
 import hashlib
 import time
+import asyncio
 from backend.dedup.redis_client import RedisClient
 from backend.schemas.evaluate import EvaluationRequest
 
@@ -22,36 +23,39 @@ class Cache:
         data_to_hash = f"{tool_name}:{arg_str}".encode('utf-8')
         return hashlib.sha256(data_to_hash).hexdigest()
 
-    def orchestrator(self, request: EvaluationRequest):
+    async def async_orchestrator(self, request: EvaluationRequest):
         """Intercepts the tool request, atomically claims execution rights, or returns cached data."""
         # 1. Normalize and hash the input from the Pydantic model
         norm_args = self.normalized(request.arguments)
         key = self.get_cache(request.tool_name, norm_args)
 
-        # 2. Try to atomically claim it using the agent_id from the request
+        existing_result = self.client.get(key)
+        if existing_result and not str(existing_result).startswith("CLAIMED_BY_"):
+            self.client.increment_duplicate_counter()
+            try:
+                return json.loads(existing_result)
+            except (json.JSONDecodeError, TypeError):
+                return existing_result
+            
         claim_value = f"CLAIMED_BY_{request.agent_id}"
         claimed = self.client.setnx(key, claim_value, timeout=30)
+        
+        print("claimed : ", claimed, key , claim_value)
 
-        # 3. If claimed successfully -> return False ("Go ahead and execute, you own this")
         if claimed:
-            return False
+            return False # "Go ahead and execute, you own this"
 
         # 4. If claim fails -> someone else is already working on it. Wait for the result.
-        for _ in range(30): # Poll for up to 30 seconds
+        for _ in range(30): 
             result = self.client.get(key)
             if result and not str(result).startswith("CLAIMED_BY_"):
-                
-                # 5. WE SAVED A DUPLICATE! Log it to the dashboard counter.
                 self.client.increment_duplicate_counter()
-                
-                # Data is ready
                 try:
                     return json.loads(result)
                 except (json.JSONDecodeError, TypeError):
                     return result
-            time.sleep(1) # Wait before next check
+            await asyncio.sleep(1) # Yields control back to FastAPI!
             
-        # Fallback if wait times out
         return False
 
     def save_result(self, request: EvaluationRequest, result_data: dict):
