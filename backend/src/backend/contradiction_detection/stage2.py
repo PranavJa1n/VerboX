@@ -10,7 +10,7 @@ class Stage2:
             statement_2 : {statements[1]}
         """
         response = self.model.invoke(query)
-        return response.is_contradictory
+        return response
 
 
 if __name__ == '__main__':
