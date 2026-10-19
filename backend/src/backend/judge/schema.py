@@ -2,14 +2,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from pydantic import BaseModel, Field
 
-@dataclass
-class Flag:
+class Flag(BaseModel):
     type: str
     severity: float
     reason: str
 
-@dataclass
-class Verdict:
+class Verdict(BaseModel):
     verdict_id: str
     trace_id: str
     span_id: str
