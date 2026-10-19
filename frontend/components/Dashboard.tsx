@@ -6,7 +6,7 @@ import type { TabId } from '@/lib/types';
 import DemoModal from './DemoModal';
 import Footer from './Footer';
 import Header from './Header';
-import TabNav from './TabNav';
+import Sidebar from './Sidebar';
 import Benchmarks from './tabs/Benchmarks';
 import HitlQueue from './tabs/HitlQueue';
 import Overview from './tabs/Overview';
@@ -21,16 +21,18 @@ export default function Dashboard() {
 
   return (
     <DashboardProvider>
-      <Header onOpenDemo={openDemo} />
-      <TabNav active={tab} onChange={setTab} />
+      <Header active={tab} onTabChange={setTab} onOpenDemo={openDemo} />
 
-      <main className="flex-1 px-6 lg:px-10 py-8 max-w-7xl mx-auto w-full space-y-10">
-        {tab === 'overview' && <Overview />}
-        {tab === 'policy' && <PolicyFeed onOpenDemo={openDemo} />}
-        {tab === 'swarm' && <SwarmTopology />}
-        {tab === 'benchmarks' && <Benchmarks onOpenDemo={openDemo} />}
-        {tab === 'hitl' && <HitlQueue />}
-      </main>
+      <div className="flex flex-1 gap-6 px-4 sm:px-6 lg:px-8 pb-8 pt-2 w-full max-w-[1600px] mx-auto">
+        <Sidebar active={tab} onChange={setTab} />
+        <main className="flex-1 min-w-0 space-y-6">
+          {tab === 'overview' && <Overview />}
+          {tab === 'policy' && <PolicyFeed onOpenDemo={openDemo} />}
+          {tab === 'swarm' && <SwarmTopology />}
+          {tab === 'benchmarks' && <Benchmarks onOpenDemo={openDemo} />}
+          {tab === 'hitl' && <HitlQueue />}
+        </main>
+      </div>
 
       <Footer />
       <DemoModal open={demoOpen} onClose={closeDemo} />
