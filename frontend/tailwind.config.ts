@@ -38,10 +38,14 @@ const config: Config = {
           light: 'rgb(var(--c-amber-light) / <alpha-value>)',
         },
       },
+      // The new theme uses one geometric sans everywhere. `mono` and `serif`
+      // are pointed at it so existing `font-mono` / `font-serif` classes pick
+      // up the new look without editing every component. The demo terminal
+      // keeps a real monospace via `--font-code` (see globals.css).
       fontFamily: {
-        sans: ['var(--font-inter)', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
-        serif: ['var(--font-serif)', 'serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-sans)', 'system-ui', 'sans-serif'],
       },
     },
   },
