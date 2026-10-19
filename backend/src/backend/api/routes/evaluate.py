@@ -31,9 +31,11 @@ async def evaluate_tool_call(request: EvaluationRequest, rules_by_tool: dict[str
             )
  
         # GATE 2: The Dedup / Cache Check
-        cached_data = dedup_cache.orchestrator(request)
- 
+        cached_data = await dedup_cache.async_orchestrator(request)
+        print('checking cache')
+        print(cached_data)
         if cached_data is not False:
+            print('cache hit')
             # cache hit Stop the agent from executing.
             return EvaluationResponse(
                 action="cache_hit",
@@ -42,7 +44,7 @@ async def evaluate_tool_call(request: EvaluationRequest, rules_by_tool: dict[str
             )
         
         # PASSED: The agent is clear to execute
-        
+        print('cache miss')
         return EvaluationResponse(
             action="allow",
             reason="Passed Tier 1 policies and cache miss.",
