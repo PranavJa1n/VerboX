@@ -28,6 +28,17 @@ The Problem: Today's tools only tell you *what* an agent did. Nothing tells you 
 
 ---
 
+## How It Works
+
+verboX runs a two-tier evaluation model, borrowed from how real-world policy engines avoid relying on an LLM for every decision:
+
+- **Tier 1 - deterministic, millisecond-fast.** Hard rules written as YAML (`field`, `operator`, `value`) checked before a tool call is allowed to run. No LLM involved, no ambiguity - if a refund exceeds a limit or a scaling request is too aggressive, it's blocked before it ever reaches the real API.
+- **Tier 2 - LLM-as-judge, asynchronous.** After a tool call executes, a judge model reviews the action, its arguments, and its actual result, flagging it as `redundant`, `risky`, or a `policy_violation` with a severity score and a reason - not just a log line, an actual verdict.
+
+Alongside this, a **shared cache layer** stops multiple agents from redundantly calling the same tool with the same arguments within one run, and a **contradiction detector** (NER/noun-phrase filtering feeding into deeper comparison) catches agents whose conclusions silently conflict - e.g. one agent recommending a rollback while another recommends scaling, based on genuinely different evidence.
+
+---
+
 ## Who It's For
 
 - **AI/ML engineering teams** - shipping agentic products who need to catch behavioral regressions before they reach users
@@ -39,8 +50,15 @@ The Problem: Today's tools only tell you *what* an agent did. Nothing tells you 
 
 | | |
 | --- | --- |
+| **verboX-Backend** | FastAPI service running the Tier 1/Tier 2 evaluation engine, the shared cache, and contradiction detection - the brain of the system |
 | **verboX-SDK** | Drop-in integration layer - decorators or framework hooks that wrap agent tool calls |
 | **verboX-Dashboard** | Monitoring & control plane - policies, compliance scores, and reliability trends |
+
+---
+
+## Test Subject: Pixos
+
+verboX is validated against **Pixos**, a purpose-built autonomous SRE incident-response swarm (Supervisor, Telemetry, FinOps, and Remediation agents orchestrated with LangGraph) running against a mocked AWS environment. Pixos is deliberately built to fail in specific, predictable ways - reckless execution, redundant tool calls, agent-vs-agent contradictions - so verboX has real, repeatable failure modes to catch.
 
 ---
 
