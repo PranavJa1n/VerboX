@@ -105,7 +105,34 @@ class HumanFeedbackLoop:
 
         if flag_type:
             items = [v for v in items if any(f.get("type") == flag_type for f in v.get("flags", []))]
+
+        if agent_id:
+            items = [v for v in items if await self._verdict_belongs_to_agent(v, agent_id)]
         return items[:limit]
+
+    async def _verdict_belongs_to_agent(self, verdict: Dict[str, Any], agent_id: str) -> bool:
+        """
+        Resolves whether a verdict is attributable to a given agent, by
+        looking up the span it was produced from.
+
+        - Step verdicts: attributable to whichever agent's span was judged.
+        - Contradiction verdicts (span_id is None): span multiple agents by
+        nature, so they're excluded from a single-agent filtered view
+        rather than guessed at.
+        """
+        span_id = verdict.get("span_id")
+        if not span_id:
+            return False
+        span = None
+        if self.mongo and hasattr(self.mongo, "traces"):
+            span = await self.mongo.traces.find_one({"span_id" : span_id})
+        else:
+            trace_id = verdict.get("trace_id")
+            for s in self._traces.get(trace_id, []):
+                if s.get("span_id") == span_id:
+                    span = s
+                    break
+        return bool(span) and span.get("agent_id") == agent_id
 
     async def get_verdict_context(self, verdict_id: str) -> Dict[str, Any]:
         verdict = None
