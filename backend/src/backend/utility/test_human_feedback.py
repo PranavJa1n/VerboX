@@ -5,9 +5,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 try:
-    from human_feedback import HumanFeedbackLoop
+    from backend.utility.human_feedback import HumanFeedbackLoop
 except ImportError:
-    from utility.human_feedback import HumanFeedbackLoop
+    from backend.utility.human_feedback import HumanFeedbackLoop
 
 
 async def test_feedback_loop():
