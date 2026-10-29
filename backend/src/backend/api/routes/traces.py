@@ -7,6 +7,10 @@ from backend.judge.judge import evaluate
 from backend.dedup.cache import Cache
 from backend.schemas.evaluate import EvaluationRequest
 from backend.contradiction_detection.engine import AgnosticContradictionEngine
+import uuid
+from backend.judge.judge import Verdict, Flag
+from backend.judge.prompt import PROMPT_VERSION
+from datetime import datetime
 
 dedup_cache = Cache()
 router = APIRouter()
@@ -92,14 +96,34 @@ async def run_batch_deep_pass(trace_id: str):
                 print(f"   Conflict: '{c['statement_a']}' VS '{c['statement_b']}'")
                 print(f"   Severity: {c['severity']} | Reason: {c['reasoning']}")
                 
-            await mongo_client.save_verdict({
-                "trace_id": trace_id,
-                "flags": [{
-                    "type": "multi_agent_contradiction",
-                    "severity": c["severity"],
-                    "reason": c["reasoning"]
-                } for c in contradictions]
-            })
+            # await mongo_client.save_verdict({
+            #     "trace_id": trace_id,
+            #     "flags": [{
+            #         "type": "multi_agent_contradiction",
+            #         "severity": c["severity"],
+            #         "reason": c["reasoning"]
+            #     } for c in contradictions]
+            # })
+
+            verdict = Verdict(
+                verdict_id=str(uuid.uuid4()),
+                verdict_type="contradiction",
+                trace_id=trace_id,
+                span_id=None,
+                flags=[
+                    Flag(
+                        type="multi_agent_contradiction",
+                        severity=c["severity"],
+                        reason=c["reasoning"],
+                    )
+                    for c in contradictions
+                ],
+                judge_model="gpt-4o",
+                prompt_version=PROMPT_VERSION,
+                evaluated_at=datetime.now(),
+            )
+
+            await mongo_client.save_verdict(verdict.model_dump())
             print(f"💾 [Module 2] Contradiction Verdict saved to Cosmos DB.")
         else:
             print(f"✅ [Module 2] Swarm is logically consistent. No contradictions found.")
