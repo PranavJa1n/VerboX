@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pydantic import BaseModel, Field
+from typing import Literal, Optional
 
 class Flag(BaseModel):
     type: str
@@ -9,8 +10,9 @@ class Flag(BaseModel):
 
 class Verdict(BaseModel):
     verdict_id: str
+    verdict_type: Literal["step", "contradiction"] = "step"
     trace_id: str
-    span_id: str
+    span_id: Optional[str] = None
     flags: list[Flag]
     judge_model: str
     prompt_version: str
