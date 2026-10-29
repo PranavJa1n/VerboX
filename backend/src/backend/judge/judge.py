@@ -16,6 +16,7 @@ def evaluate(step: dict) -> Verdict:
     print(f"✅ [Module 1] LLM Audit Complete. Found {len(flags)} flags.")
     return Verdict(
         verdict_id = str(uuid.uuid4()),
+        verdict_type="step",
         trace_id = step.get("trace_id"),
         span_id = step.get("span_id"),
         flags = flags,
