@@ -41,6 +41,8 @@ class MongoClient:
         cursor = self.traces.find({"trace_id": trace_id})
         # Convert the async cursor to a Python list
         spans = await cursor.to_list(length=None)
+        for s in spans:
+            s.pop("_id", None)
         return spans
 
 # Singleton client instance

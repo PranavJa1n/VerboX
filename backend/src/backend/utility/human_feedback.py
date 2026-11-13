@@ -7,6 +7,9 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 
+def _strip_mongo_id(doc: Dict[str, Any]) -> Dict[str, Any]:
+    doc.pop("_id", None)
+    return doc
 
 class ReviewerVerdict(str, Enum):
     AGREE = "agree"
@@ -85,7 +88,8 @@ class HumanFeedbackLoop:
     async def get_all_labels(self) -> List[Dict[str, Any]]:
         if self.mongo and hasattr(self.mongo, "db"):
             cursor = self.mongo.db["human_labels"].find({})
-            return await cursor.to_list(length=None)
+            docs = await cursor.to_list(length=None)
+            return [_strip_mongo_id(v) for v in docs]
         return list(self._labels.values())
 
     async def get_review_feed(
@@ -100,6 +104,7 @@ class HumanFeedbackLoop:
                 query["flags.type"] = flag_type
             cursor = self.mongo.verdicts.find(query).limit(limit)
             items = await cursor.to_list(length=limit)
+            items = [_strip_mongo_id(v) for v in items]
         else:
             items = list(self._verdicts.values())
 
@@ -138,6 +143,8 @@ class HumanFeedbackLoop:
         verdict = None
         if self.mongo and hasattr(self.mongo, "verdicts"):
             verdict = await self.mongo.verdicts.find_one({"verdict_id": verdict_id})
+            if verdict:
+                verdict = _strip_mongo_id(verdict)
         verdict = verdict or self._verdicts.get(verdict_id)
         if not verdict:
             raise ValueError(f"Verdict '{verdict_id}' not found.")
