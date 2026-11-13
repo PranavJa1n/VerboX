@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs</title>
+    <link rel="stylesheet" href="dist.css">
+    <style>
+        .animate-hinge-left {
+            transform-origin: right center;
+            animation: cpu-smooth-wing 1s ease-in-out infinite;
+        }
+
+        .animate-hinge-right {
+            transform-origin: left center;
+            animation: cpu-smooth-wing 1s ease-in-out infinite;
+        }
+
+        @keyframes cpu-smooth-wing {
+
+            0%,
+            100% {
+                transform: scaleX(1);
+                filter: drop-shadow(0 0 80px #ff7300) drop-shadow(0 0 200px #ff3c00);
+            }
+
+            50% {
+                transform: scaleX(0.15);
+                filter: drop-shadow(0 0 5px rgba(253, 114, 0, 0.373)) drop-shadow(0 0 15px rgba(255, 60, 0, 0));
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-full m-0 p-0 font-sans text-slate-100 bg-black overflow-x-hidden">
+    <div class="min-h-screen m-0 p-0 flex flex-col bg-black w-full items-center justify-between">
+        <nav
+            class="bg-black/85 backdrop-blur w-[92%] md:w-[90%] my-4 md:my-10 sticky top-3 md:top-10 z-10 border rounded-br-2xl rounded-tl-2xl text-orange-100 px-4 md:px-8">
+            <div class="flex items-center justify-between gap-3 h-16 md:h-20">
+                <div class="flex items-center shrink-0">
+                    <img src="public/logo.png" alt="logo" class="h-8 md:h-10 w-auto">
+                    <p class="text-xl md:text-2xl mx-1">verboX</p>
+                </div>
+
+                <!-- Desktop links -->
+                <div class="hidden md:block border h-12"></div>
+                <ul class="hidden md:flex justify-between flex-1 max-w-md mx-auto">
+                    <li><a href="/docs.html">Docs</a></li>
+                    <li>Demo 🔒</li>
+                    <li><a href="/about.html">About Us</a></li>
+                </ul>
+                <div class="hidden md:block border h-12"></div>
+
+                <div class="flex items-center">
+                    <button id="nav-signup"
+                        class="border rounded-br-lg h-8 px-3 md:w-20 bg-orange-100 text-black mx-1 md:mx-2 text-sm md:text-base">Sign
+                        Up</button>
+                    <button id="nav-login"
+                        class="border rounded-bl-lg h-8 px-3 md:w-20 bg-black text-orange-100 mx-1 md:mx-2 text-sm md:text-base">Log
+                        In</button>
+                    <!-- Mobile menu toggle -->
+                    <button type="button" id="menu-btn" aria-label="Menu" aria-expanded="false"
+                        class="md:hidden ml-1 h-8 w-8 border rounded text-lg leading-none"
+                        onclick="var m=document.getElementById('mobile-menu');var o=m.classList.toggle('hidden');this.setAttribute('aria-expanded',!o)">☰</button>
+                </div>
+            </div>
+
+            <!-- Mobile links -->
+            <ul id="mobile-menu"
+                class="hidden md:hidden absolute top-full left-0 w-full rounded-b-2xl border-b bg-black/90 backdrop-blur flex-col gap-3 py-3 text-center">
+                <li><a href="/docs.html" class="block">Docs</a></li>
+                <li>Demo 🔒</li>
+                <li><a href="/about.html">About Us</a></li>
+            </ul>
+        </nav>
+        <main class="flex-1 w-full flex flex-col justify-center ">
+            
+        </main>
+        <footer>
+        </footer>
+    </div>
+
+</body>
+
+</html>

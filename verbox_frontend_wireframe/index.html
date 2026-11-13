@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>verboX</title>
+    <link rel="stylesheet" href="dist.css">
+    <style>
+        .animate-hinge-left {
+            transform-origin: right center;
+            animation: cpu-smooth-wing 1s ease-in-out infinite;
+        }
+
+        .animate-hinge-right {
+            transform-origin: left center;
+            animation: cpu-smooth-wing 1s ease-in-out infinite;
+        }
+
+        @keyframes cpu-smooth-wing {
+
+            0%,
+            100% {
+                transform: scaleX(1);
+                filter: drop-shadow(0 0 80px #ff7300) drop-shadow(0 0 200px #ff3c00);
+            }
+
+            50% {
+                transform: scaleX(0.15);
+                filter: drop-shadow(0 0 5px rgba(253, 114, 0, 0.373)) drop-shadow(0 0 15px rgba(255, 60, 0, 0));
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-full m-0 p-0 font-sans text-slate-100 bg-black overflow-x-hidden">
+    <div class="min-h-screen m-0 p-0 flex flex-col bg-black w-full items-center justify-between">
+
+        <!-- NAV -->
+        <nav
+            class="bg-black/85 backdrop-blur w-[92%] md:w-[90%] my-4 md:my-10 sticky top-3 md:top-10 z-10 border rounded-br-2xl rounded-tl-2xl text-orange-100 px-4 md:px-8">
+            <div class="flex items-center justify-between gap-3 h-16 md:h-20">
+                <div class="flex items-center shrink-0">
+                    <img src="public/logo.png" alt="logo" class="h-8 md:h-10 w-auto">
+                    <p class="text-xl md:text-2xl mx-1">verboX</p>
+                </div>
+
+                <!-- Desktop links -->
+                <div class="hidden md:block border h-12"></div>
+                <ul class="hidden md:flex justify-between flex-1 max-w-md mx-auto">
+                    <li><a href="/docs.html">Docs</a></li>
+                    <li>Demo 🔒</li>
+                    <li><a href="/about.html">About Us</a></li>
+                </ul>
+                <div class="hidden md:block border h-12"></div>
+
+                <div class="flex items-center">
+                    <button id="nav-signup"
+                        class="border rounded-br-lg h-8 px-3 md:w-20 bg-orange-100 text-black mx-1 md:mx-2 text-sm md:text-base">Sign
+                        Up</button>
+                    <button id="nav-login"
+                        class="border rounded-bl-lg h-8 px-3 md:w-20 bg-black text-orange-100 mx-1 md:mx-2 text-sm md:text-base">Log
+                        In</button>
+                    <!-- Mobile menu toggle -->
+                    <button type="button" id="menu-btn" aria-label="Menu" aria-expanded="false"
+                        class="md:hidden ml-1 h-8 w-8 border rounded text-lg leading-none"
+                        onclick="var m=document.getElementById('mobile-menu');var o=m.classList.toggle('hidden');this.setAttribute('aria-expanded',!o)">☰</button>
+                </div>
+            </div>
+
+            <!-- Mobile links -->
+            <ul id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full rounded-b-2xl border-b bg-black/90 backdrop-blur flex-col gap-3 py-3 text-center">
+                <li><a href="/docs.html" class="block">Docs</a></li>
+                <li>Demo 🔒</li>
+                <li><a href="/about.html">About Us</a></li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 w-full flex flex-col justify-center">
+            <div class="flex md:flex-row flex-col w-full md:min-h-[80vh] justify-center">
+
+                <!-- AUTH CARD -->
+                <div class="w-full md:w-1/2 p-4 md:p-8 flex items-center justify-center bg-transparent bg-none">
+                    <div id="card"
+                        class="border-r border-l w-full max-w-xl flex flex-col rounded-br-4xl rounded-tl-4xl overflow-hidden">
+                        <div class="flex items-center w-full justify-center">
+                            <img src="public/logo.png" alt="logo" class="h-24 md:h-40 w-auto">
+                        </div>
+                        <form class="flex flex-col w-full flex-1 px-6 md:px-12">
+                            <div id="field" class="relative w-full flex flex-col">
+                                <label for="email" class="my-3 md:my-5">Email :</label>
+                                <div class="flex gap-2 items-center">
+                                    <input class="border w-full max-w-sm h-10 rounded-br-2xl rounded-tl-2xl p-2"
+                                        id="email" type="email" placeholder="example@domain.com" autocomplete="off" />
+                                    <p class="text-gray-500 text-sm" id="userCount"></p>
+                                </div>
+                            </div>
+                            <div id="field" class="relative w-full flex flex-col">
+                                <label for="pass" class="my-3 md:my-5">Password :</label>
+                                <div class="flex items-center gap-2">
+                                    <input class="border w-full max-w-sm h-10 rounded-br-2xl rounded-tl-2xl p-2"
+                                        id="pass" type="password" placeholder="*******" autocomplete="off" />
+                                    <button type="button" id="eye">👁️</button>
+                                    <p class="text-gray-500 text-sm" id="passCount"></p>
+                                </div>
+                            </div>
+                            <div class="w-full flex items-center justify-center my-6">
+                                <button type="button" id="submit-btn"
+                                    class="border rounded-br-lg h-9 px-4 bg-orange-100 text-black">Create
+                                    account</button>
+                            </div>
+                        </form>
+                        <div
+                            class="border-t flex flex-wrap items-center justify-center gap-y-2 py-3 w-full mt-auto">
+                            <p id="toggle-msg">Already have an account ?</p>
+                            <button id="toggle-btn"
+                                class="border rounded-bl-lg h-8 w-20 bg-black text-orange-100 mx-2">Log in</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WINGS (desktop only) -->
+                <div class="w-1/2 p-8 hidden md:block ">
+                    <div class="relative w-full h-full min-h-[400px] flex justify-center items-center rotate-[15deg]">
+                        <div class="animate-hinge-left absolute right-1/2 w-1/2 h-full bg-contain bg-no-repeat bg-right"
+                            style="background-image: url('public/left.png');"></div>
+                        <div class="animate-hinge-right absolute left-1/2 w-1/2 h-full bg-contain bg-no-repeat bg-left"
+                            style="background-image: url('public/right.png');"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOOSTED BY -->
+            <div class="min-h-[20vh] p-4 md:p-8">
+                <h1
+                    class="border-t flex justify-center items-center p-4 text-xl md:text-2xl rounded-br-2xl rounded-tl-2xl overflow-hidden">
+                    Boosted By :</h1>
+                <div id="cards" class="flex overflow-x-auto snap-x pb-2">
+                    <div
+                        class="snap-start border h-36 w-36 md:h-40 md:w-40 flex flex-col m-3 md:m-5 rounded-br-2xl rounded-tl-2xl overflow-hidden flex-none">
+                        <img class="" src="public/sarvam_logo_2.avif" alt="Sarvam">
+                        <h1 class="border flex-1 items-center justify-center flex">SARVAM</h1>
+                    </div>
+                    <div
+                        class="snap-start border h-36 w-36 md:h-40 md:w-40 flex flex-col m-3 md:m-5 rounded-br-2xl rounded-tl-2xl overflow-hidden flex-none">
+                        <h1 class="border flex-1 items-center justify-center flex text-center">Coming Soon...</h1>
+                    </div>
+                    <div
+                        class="snap-start border h-36 w-36 md:h-40 md:w-40 flex flex-col m-3 md:m-5 rounded-br-2xl rounded-tl-2xl overflow-hidden flex-none">
+                        <h1 class="border flex-1 items-center justify-center flex text-center">Coming Soon...</h1>
+                    </div>
+                    <div
+                        class="snap-start border h-36 w-36 md:h-40 md:w-40 flex flex-col m-3 md:m-5 rounded-br-2xl rounded-tl-2xl overflow-hidden flex-none">
+                        <h1 class="border flex-1 items-center justify-center flex text-center">Coming Soon...</h1>
+                    </div>
+                    <div
+                        class="snap-start border h-36 w-36 md:h-40 md:w-40 flex flex-col m-3 md:m-5 rounded-br-2xl rounded-tl-2xl overflow-hidden flex-none">
+                        <h1 class="border flex-1 items-center justify-center flex text-center">Coming Soon...</h1>
+                    </div>
+                    <div
+                        class="snap-start border h-36 w-36 md:h-40 md:w-40 flex flex-col m-3 md:m-5 rounded-br-2xl rounded-tl-2xl overflow-hidden flex-none">
+                        <h1 class="border flex-1 items-center justify-center flex text-center">Coming Soon...</h1>
+                    </div>
+                    <div
+                        class="snap-start border h-36 w-36 md:h-40 md:w-40 flex flex-col m-3 md:m-5 rounded-br-2xl rounded-tl-2xl overflow-hidden flex-none">
+                        <h1 class="border flex-1 items-center justify-center flex text-center">Coming Soon...</h1>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer></footer>
+    </div>
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>
