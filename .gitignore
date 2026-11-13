@@ -23,3 +23,5 @@ next-env.d.ts
 .env*.local
 .DS_Store
 frontend/venv/
+
+logs.txt

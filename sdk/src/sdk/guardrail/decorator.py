@@ -1,7 +1,7 @@
 import functools
 from sdk.client.http_client import check_evaluation
 
-class PolicyBlokedError(Exception):
+class PolicyBlockedError(Exception):
     """Raised when verboX's Tier 1 policy check blocks a tool call."""
     pass
 
@@ -26,7 +26,7 @@ def guard(agent_id: str):
             action = decision.get("action")
 
             if action == "block":
-                raise PolicyBlokedError(decision.get("reason", "Blocked by verboX policy"))
+                raise PolicyBlockedError(decision.get("reason", "Blocked by verboX policy"))
 
             if action == "cache_hit":
                 return decision.get("cached_result")
