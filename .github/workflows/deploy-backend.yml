@@ -95,7 +95,7 @@ jobs:
 
       - name: Deploy new image to Azure Container Apps
         run: |
-          IMAGE_TAG="$(printf '%s\n' "${{ steps.meta.outputs.tags }}" | head -n 1)"
+          IMAGE_TAG="$(printf '%s\n' "${{ steps.meta.outputs.tags }}" | grep ':sha-' | head -n 1)"
           echo "Deploying ${IMAGE_TAG}"
           az containerapp update \
             --name "${AZURE_CONTAINER_APP_NAME}" \
