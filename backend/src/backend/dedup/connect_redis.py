@@ -2,9 +2,9 @@
 """
 import os
 import redis
-from dotenv import load_dotenv
+from backend.core.config import load_central_env
 
-load_dotenv()
+load_central_env()
 
 
 class ConnectRedis:
