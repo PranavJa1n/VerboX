@@ -57,7 +57,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "asyncio" },
-    { name = "dotenv-python" },
     { name = "fastapi", extra = ["standard"] },
     { name = "langchain" },
     { name = "langchain-openai" },
@@ -77,7 +76,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "asyncio", specifier = ">=4.0.0" },
-    { name = "dotenv-python", specifier = ">=0.0.1" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.146.0" },
     { name = "langchain", specifier = ">=1.4.2" },
     { name = "langchain-openai", specifier = ">=1.6.4" },
@@ -310,12 +308,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/ef/4a/50822184bd67cc649
 wheels = [
     { url = "https://files.pythonhosted.org/packages/10/02/cdcc9b7c051786a103c3b09e1003a82fa0c66bcb91ffbdabcfbf7b4163b9/dnspython-2.9.0-py3-none-any.whl", hash = "sha256:9a4aedb833c3c1b49214d04d44d3032ab7a9135f7c1d29a549b4ff78fd82fda9", size = 354822, upload-time = "2026-10-09T00:07:22.622Z" },
 ]
-
-[[package]]
-name = "dotenv-python"
-version = "0.0.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c8/ed/9004fd73042bd1777b236fd55e4fc2b7be3a4c60e16b8528538926f04ecb/dotenv-python-0.0.1.zip", hash = "sha256:362e170ca8fd69a70c1aca1fda2ddad0ac270e161e81e59f4039ec11decc14fa", size = 1824, upload-time = "2017-01-28T15:34:05.675Z" }
 
 [[package]]
 name = "email-validator"

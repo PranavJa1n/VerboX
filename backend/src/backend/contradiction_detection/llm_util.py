@@ -1,10 +1,10 @@
-from dotenv import load_dotenv
 import os
 
 from openai import AzureOpenAI
 from backend.contradiction_detection.schema import ContradictionReport
+from backend.core.config import load_central_env
 
-load_dotenv()
+load_central_env()
 
 class AzureModel:
     def __init__(self):

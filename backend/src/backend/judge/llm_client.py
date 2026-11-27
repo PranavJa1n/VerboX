@@ -1,11 +1,11 @@
 from langchain.agents import create_agent
 from langchain_openai import AzureChatOpenAI
-from dotenv import load_dotenv
 import os
 from pydantic import BaseModel, Field
+from backend.core.config import load_central_env
 from backend.judge.schema import VerdictOutput
 
-load_dotenv()
+load_central_env()
 
 model = AzureChatOpenAI(
     azure_deployment='gpt-4o',

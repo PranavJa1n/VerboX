@@ -4,9 +4,9 @@ from datetime import datetime
 from backend.judge.llm_client import judge
 from backend.judge.prompt import build_judge_prompt, PROMPT_VERSION
 from backend.judge.schema import Flag, Verdict
-from dotenv import load_dotenv
+from backend.core.config import load_central_env
 
-load_dotenv()
+load_central_env()
 
 def evaluate(step: dict) -> Verdict:
 

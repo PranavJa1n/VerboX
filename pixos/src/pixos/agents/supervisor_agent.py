@@ -1,6 +1,6 @@
 from pixos.agents.system_prompts import SUPERVISOR_SYSTEM_PROMPT
 from pixos.toolsV2.supervisor_tools import finops_agent_tool, telemetry_agent_tool, remediation_agent_tool
-from dotenv import load_dotenv
+from pixos.core.config import load_central_env
 from pixos.agents.utils.agent import get_agent
 from pixos.agents.utils.agent import model
 from pydantic import BaseModel, Field
@@ -8,7 +8,7 @@ from typing import Literal
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
-load_dotenv()
+load_central_env()
 
 
 class SupervisorDecision(BaseModel):

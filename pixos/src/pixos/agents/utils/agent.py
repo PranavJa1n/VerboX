@@ -1,9 +1,9 @@
 from langgraph.prebuilt import create_react_agent
 from langchain_openai import AzureChatOpenAI
-from dotenv import load_dotenv
 import os
+from pixos.core.config import load_central_env
 
-load_dotenv()
+load_central_env()
 
 model = AzureChatOpenAI(
     azure_deployment='gpt-4o',

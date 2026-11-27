@@ -1,9 +1,9 @@
 import asyncio
 import os
 from pymongo import AsyncMongoClient
-from dotenv import load_dotenv
+from backend.core.config import load_central_env
 
-load_dotenv()
+load_central_env()
 
 class MongoClient:
     def __init__(self):
