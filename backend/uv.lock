@@ -64,6 +64,7 @@ dependencies = [
     { name = "pymongo" },
     { name = "python-dotenv" },
     { name = "pyyaml" },
+    { name = "redis" },
     { name = "spacy" },
 ]
 
@@ -83,6 +84,7 @@ requires-dist = [
     { name = "pymongo", specifier = ">=4.19.0" },
     { name = "python-dotenv", specifier = ">=1.2.3" },
     { name = "pyyaml", specifier = ">=6.0.3" },
+    { name = "redis", specifier = ">=8.1.0" },
     { name = "spacy", specifier = ">=3.8.16" },
 ]
 

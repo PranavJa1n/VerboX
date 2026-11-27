@@ -16,6 +16,7 @@ dependencies = [
     "pymongo>=4.19.0",
     "python-dotenv>=1.2.3",
     "pyyaml>=6.0.3",
+    "redis>=8.1.0",
     "spacy>=3.8.16",
 ]
 
